@@ -28,14 +28,18 @@ app.post('/users', (request, response) => {
     
     if (userAlreadyExists) return response.status(400).json({ error: "Customer already exists!" });
 
-    users.push({
-        name,
-        username,
-        id: uuidv4(),
-        todos: []
-    });
+    const id = uuidv4(); 
 
-    return response.status(201).send();
+    const user = {
+      name,
+      username,
+      id,
+      todos: []
+  };
+
+    users.push(user);
+
+    return response.status(201).json(user);
 });
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
@@ -52,12 +56,12 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
     title,
     deadline: new Date(deadline),
     done: false,
-    create_at: new Date(),
+    created_at: new Date(),
   }
 
   user.todos.push(userOperation);
 
-  return response.status(201).send();
+  return response.status(201).json(userOperation);
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
@@ -71,7 +75,7 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   todos.title = title;
   todos.deadline = new Date(deadline);
 
-  return response.status(201).send();
+  return response.status(201).json(todos);
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
@@ -82,7 +86,7 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
   if (!todos) return response.status(404).json({ error: "Todo not found!" });
   todos.done = true;
 
-  return response.status(201).send();
+  return response.status(201).json(todos);
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
